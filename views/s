@@ -1,0 +1,36 @@
+{
+	"images": [],
+    "regNo": "SLB1528K",
+    "model": "Audi A4 1.8T FSI MU CVT ABS D/AB 2WD 4DR",
+    "color": "Black",
+    "yom": 2008,
+    "regDate": "2009-02-25T12:52:53.866Z",
+    "mileage": 111.7,
+    "omv": 35878,
+    "arf": 35878,
+    "owners": 2,
+    "paperValue": 18102,
+    "roadTaxExpireDate": "2019-02-24T12:52:53.866Z",
+    "remarks": "",
+    "startingPrice": 18102,
+    "bids" : ["5bc0cdfb5254deebe0271579"]
+}
+
+{
+	"images": [],
+    "regNo": "SKJ723P",
+    "model": "Audi A4 1.8 TFSI MU PI (XENON)",
+    "color": "Brown",
+    "yom": 2012,
+    "regDate": "2013-02-07T12:52:53.866Z",
+    "mileage": 172,
+    "omv": 33502,
+    "arf": 23502,
+    "owners": 1,
+    "paperValue": 52017,
+    "roadTaxExpireDate": "2019-02-06T12:52:53.866Z",
+    "remarks": "",
+    "startingPrice": 52017,
+    "bids" : ["5bc0cdfb5254deebe0271579"],
+    "days" : 7
+}

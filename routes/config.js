@@ -1,15 +1,15 @@
 module.exports = {
-    'weburl' : 'https://localhost:9447/',
-    //'weburl' : 'https://139.199.89.130:9447/',
+    //'weburl' : 'https://localhost:9447/',
+    'weburl' : 'https://139.199.89.130:9447/',
     'secretKey': '12345-67890-09876-54321',
-    'mongoUrl' : 'mongodb://localhost:27017/car',
-    //'mongoUrl' : 'mongodb://readWrite:readWrite@127.0.0.1:27017/mydb',
+    //'mongoUrl' : 'mongodb://localhost:27017/car',
+    'mongoUrl' : 'mongodb://readWrite:readWrite@127.0.0.1:27017/mydb',
     //'mongoUrl' : 'mongodb+srv://readWrite:readWrite@clustersg-c55nr.gcp.mongodb.net/car',
     'facebook': {
-        clientId: '1675473695894588',
-        clientSecret: '633544c3d5832ab16b4a41a65b1ad378'
-        // clientId: '185692388989362',
-        // clientSecret: '479797d3dd52a4f6b3f43f598e42f008'
+        // clientId: '1675473695894588',
+        // clientSecret: '633544c3d5832ab16b4a41a65b1ad378'
+        clientId: '185692388989362',
+        clientSecret: '479797d3dd52a4f6b3f43f598e42f008'
     },
     'gmail': {
         user: 'testcarsauction@gmail.com',

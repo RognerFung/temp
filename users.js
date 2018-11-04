@@ -22,10 +22,11 @@ router.route('/signup')
             if (err) {
                 return next(err);
             } else {
-                let act_url = '<a href="' + config.weburl + 'users/activation?id=' + user._id + '&actCode=' + user.actCode + '"></a>';
-                emailer.emailer(user.email, "Welcome to biddit", "Thank you for signing in! Click " + act_url + " to activate",
+                emailer.emailer(
+                    user.email,
+                    'Welcome to biddit',
+                    'Thank you for signing in! Click <a href="' + config.weburl + 'users/activation?id=' + user._id + '&actCode=' + user.actCode + '"></a> to activate',
                     () => {
-                        console.log("An activation email has been sent");
                         passport.authenticate('local')(req, res, () => {
                             res.json({success: true, statusCode: 200, message: 'Thank you for signing up!'});
                         });
@@ -44,7 +45,7 @@ router.route('/test')
             res.json({success: false, statusCode: 404, message: "User " + req.user._id + " not found"});
         } else {
             let act_url = '<a href="' + config.weburl + 'users/activation?id=' + user._id + '&actCode=' + user.actCode + '"></a>';
-            emailer.emailer(user.email, 'Welcome to BIDDIT', 'Thank you for signing in! Click ' + act_url + ' to activate',
+            emailer.emailer(user.email, 'Welcome to car auction', 'Thank you for signing in! Click ' + act_url + ' to activate',
                 () => {
                     console.log("A email has been sent");
                     res.json({success: true, statusCode: 200, message: "An activation email has been sent to you"});
@@ -60,9 +61,9 @@ router.route('/activation')
     User.findById(req.query.id)
     .then(user => {
         if (user == null) {
-            res.json({success: false, statusCode: 404, message: "User " + req.query.id + " not found"});
+            res.json({success: false, statusCode: 404, message: "User " + req.user._id + " not found"});
         } else if (user.isActive) {
-            res.json({success: false, statusCode: 400, message: "User " + req.query.id + " doesn't need to be activated"});
+            res.json({success: false, statusCode: 400, message: "User " + req.user._id + " doesn't need to be activated"});
         } else if (user.actCode != req.query.actCode) {
             res.json({success: false, statusCode: 400, message: "Activation code was incorrect"});
         } else {
@@ -71,7 +72,7 @@ router.route('/activation')
             user.save()
             .then(() => {
                 res.json({success: true, statusCode: 200, message: "Activation complete"}); 
-            }, err => next(err));
+            }, (err) => next(err));
         }
     }, err => next(err))
     .catch(err => next(err));
@@ -100,6 +101,7 @@ router.route('/login')
 //can't destroy token in the server side, so to really logout must destroy token in the client side 
 router.route('/logout')
 .get(cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
+    console.log(req.session);
     if (req.session) {
         req.session.destroy();
         res.clearCookie('session-id');
@@ -110,18 +112,6 @@ router.route('/logout')
 });
 
 router.route('/userInfo')
-.get(authenticate.verifyUser, cors.corsWithOptions, (req, res, next) => {
-    User.findById(req.user._id)
-    .select('-isAdmin -actCode -_id')
-    .then(user => {
-        if (user == null) {
-            res.json({success: false, statusCode: 404, message: "User " + req.user._id + " has not been found"});
-        } else {
-            res.json({success: true, statusCode: 200, message: "User " + req.user._id + " has been found", result: user});  
-        }
-    }, err => next(err))
-    .catch(err => next(err));
-})
 .post(authenticate.verifyUser, cors.corsWithOptions, (req, res, next) => {
     User.findById(req.user._id)
     .then(user => {
@@ -209,7 +199,9 @@ router.route('/resetPassword')
         }
     }, err => next(err))
     .catch(err => next(err));
-})
+});
+
+router.route('/resetPassword')
 .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     User.findById(req.user._id)
     .then(user => {
@@ -235,37 +227,6 @@ router.route('/resetPassword')
     .catch(err => next(err));
 });
 
-router.route('/findUser')
-.get(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    User.findOne(req.query)
-    .select('-_id email tel username isSeller isBidder')
-    .then(user => {
-        if (req.query._id == null && req.query.username == null && req.query.email == null) {
-            res.json({success: false, statusCode: 400, message: "No _id, username or email was provided"});
-        } else if (user == null) {
-            res.json({success: false, statusCode: 404, message: "User has not been found"});
-        } else {
-            res.json({success: true, statusCode: 200, message: "User has been found", result: user});
-        }
-    }, err => next(err))
-    .catch(err => next(err));
-})
-router.route('/findUser')
-.post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    User.findOne(req.body)
-    .select('-_id email tel username isSeller isBidder')
-    .then(user => {
-        if (req.body._id == null && req.body.username == null && req.body.email == null) {
-            res.json({success: false, statusCode: 400, message: "No _id, username or email was provided"});
-        } else if (user == null) {
-            res.json({success: false, statusCode: 404, message: "User has not been found"});
-        } else {
-            res.json({success: true, statusCode: 200, message: "User has been found", result: user});
-        }
-    }, err => next(err))
-    .catch(err => next(err));
-});
-
 router.route('/facebook/token')
 .get(passport.authenticate('facebook-token'), (req, res) => {
     if (req.user) {
@@ -284,7 +245,6 @@ router.get('/checkJWTToken', cors.corsWithOptions, (req, res) => {
             return res.json({success: false, statusCode: 401, message: "JWT invalid!"});
         }
         else {
-            console.log(user);
             return res.json({success: true, statusCode: 200, message: 'JWT valid!'});
         }
     }) (req, res);

@@ -6,14 +6,14 @@ var favoriteSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    dishes:[{
+    cars:[{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Dish'
+        ref: 'Car'
     }]
 }, {
-    timestamps: true
+    versionKey: false
 });
 
-var Favorites = mongoose.model('Favorites', favoriteSchema);
+var Favorite = mongoose.model('Favorites', favoriteSchema);
 
-module.exports = Favorites;
+module.exports = Favorite;

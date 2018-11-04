@@ -10,25 +10,30 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
-var dishRouter = require('./routes/dishRouter');
-var promoRouter = require('./routes/promoRouter');
-var leaderRouter = require('./routes/leaderRouter');
-const uploadRouter = require('./routes/uploadRouter');
+var carRouter = require('./routes/carRouter');
+var uploadRouter = require('./routes/uploadRouter');
 var favoriteRouter = require('./routes/favoriteRouter');
+var bidRouter = require('./routes/bidRouter');
+var adminRouter = require('./routes/adminRouter');
 
-const mongoose = require('mongoose');
+var mongoose = require('mongoose');
 
-const Dishes = require('./models/dishes');
+var url = config.mongoUrl;
+var connect = mongoose.connect(url, { useNewUrlParser: true });
 
-const url = config.mongoUrl;
-const connect = mongoose.connect(url);
 
 connect.then((db) => {
   console.log("Connected correctly to server");
 }, (err) => { console.log(err); });
 
 var app = express();
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  //res.header("Access-Control-Allow-Credentials", true);
+  next();
+});
 
 // Secure traffic only
 app.all('*', (req, res, next) => {
@@ -42,7 +47,7 @@ app.all('*', (req, res, next) => {
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -50,27 +55,24 @@ app.use(express.urlencoded({ extended: false }));
 //app.use(cookieParser('12345-67890-09876-54321'));
 app.use(session({
   name: 'session-id',
-  secret: '12345-67890-09876-54321',
+  secret: config.secretKey,
   saveUninitialized: false,
   resave: false,
-  store: new FileStore()
+  store: new FileStore({logFn: function(){}})
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-
-
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/dishes',dishRouter);
-app.use('/promotions',promoRouter);
-app.use('/leaders',leaderRouter);
-app.use('/imageUpload',uploadRouter);
-app.use('/favorites',favoriteRouter);
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/cars', carRouter);
+app.use('/imageUpload', uploadRouter);
+app.use('/favorites', favoriteRouter);
+app.use('/bids', bidRouter);
+app.use('/admin', adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
